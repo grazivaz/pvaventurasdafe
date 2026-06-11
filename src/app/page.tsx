@@ -2,6 +2,14 @@ import Link from "next/link";
 
 const features = [
   {
+    href: "/remodel",
+    icon: "🎬",
+    title: "Remodelador de Vídeos",
+    description:
+      "Cole o link de um vídeo e receba tudo: veredito de remodelagem, roteiro 9+ min, Short, SEO, thumbnail e estrutura de cenas com prompts.",
+    color: "from-red-600 to-rose-600",
+  },
+  {
     href: "/trending",
     icon: "🔥",
     title: "Pesquisa Viral",
@@ -54,7 +62,7 @@ export default function Home() {
         <div className="relative max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-red-600/20 border border-red-600/30 text-red-400 text-sm font-medium px-4 py-1.5 rounded-full mb-6">
             <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-            Powered by Claude AI (Opus 4.7)
+            Powered by Claude AI (Opus 4.8)
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight">
             Crie Vídeos{" "}
@@ -69,8 +77,14 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link
-              href="/trending"
+              href="/remodel"
               className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl transition-colors"
+            >
+              🎬 Remodelar um Vídeo
+            </Link>
+            <Link
+              href="/trending"
+              className="bg-gray-800 hover:bg-gray-700 text-white font-bold px-6 py-3 rounded-xl transition-colors"
             >
               🔥 Começar Pesquisa
             </Link>

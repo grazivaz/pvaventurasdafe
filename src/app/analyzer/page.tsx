@@ -38,13 +38,6 @@ function AnalyzerContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (searchParams.get("title")) {
-      analyze();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const analyze = async () => {
     if (!form.title) return;
     setLoading(true);
@@ -65,6 +58,14 @@ function AnalyzerContent() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (searchParams.get("title")) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      analyze();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const scoreColor = (score: number) => {
     if (score >= 8) return "text-green-400";
