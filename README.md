@@ -56,8 +56,9 @@ O repositório já vem com tudo pronto: `Dockerfile`, `railway.json`, `render.ya
 3. Abra o serviço criado, vá em **Settings → Source** e confira o **branch**. Se a agenda ainda
    estiver na branch `claude/web-app-creation-dxm4jh`, selecione ela aqui (ou faça o merge na
    `main` antes e deixe `main`).
-4. Ainda em **Settings**, procure **Volumes → Add Volume** e use o caminho de montagem `/data`.
-   É aqui que as tarefas ficam guardadas — sem o volume, tudo se perde a cada atualização.
+4. Adicione o **volume**: clique com o botão direito no painel do projeto (ou use o menu do
+   próprio serviço) e escolha **Volume**; no caminho de montagem escreva `/data`. É aqui que as
+   tarefas ficam guardadas — sem o volume, tudo se perde a cada atualização.
 5. Vá em **Settings → Networking → Generate Domain**. O Railway devolve um endereço parecido com
    `https://agenda-production.up.railway.app`. Esse é o endereço da agenda.
 6. Espere o deploy terminar (fica verde) e abra o endereço no celular.
