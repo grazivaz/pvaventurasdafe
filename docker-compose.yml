@@ -1,0 +1,16 @@
+# Atalho para subir a agenda em qualquer servidor com Docker:
+#   docker compose up -d --build
+services:
+  agenda:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - agenda_dados:/data
+    environment:
+      AGENDA_DATA_DIR: /data
+      NEXT_PUBLIC_APP_TIMEZONE: America/Sao_Paulo
+
+volumes:
+  agenda_dados:

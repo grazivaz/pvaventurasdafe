@@ -87,15 +87,48 @@ fly deploy
 
 O `fly.toml` já fixa a região de São Paulo (`gru`) e impede a máquina de dormir.
 
-### Servidor próprio (VPS com Docker)
+### VPS com EasyPanel (Hostinger e afins)
+
+Antes de começar, aponte um subdomínio para o IP da VPS (registro **A** no seu provedor de DNS),
+por exemplo `agenda.seudominio.com.br`. O endereço precisa ser HTTPS, senão o navegador não
+deixa ativar as notificações.
+
+No EasyPanel:
+
+1. Abra o projeto e clique em **+ Service → App**. Dê o nome `agenda`.
+2. Na aba **Source**, escolha **GitHub** (ou **Git**) e preencha:
+   - Repositório: `grazivaz/pvaventurasdafe` (é público, não precisa de token)
+   - Branch: `claude/web-app-creation-dxm4jh`
+   - Build path: `/`
+3. Na aba **Build**, escolha o método **Dockerfile** e deixe o caminho como `Dockerfile`.
+4. Na aba **Environment**, cole:
+
+   ```
+   AGENDA_DATA_DIR=/data
+   VAPID_SUBJECT=mailto:seu-email@exemplo.com
+   ```
+
+5. Na aba **Mounts**, adicione um **Volume**: nome `dados`, caminho de montagem `/data`.
+   Esse é o passo que faz as tarefas sobreviverem a cada atualização.
+6. Na aba **Domains**, adicione o subdomínio, aponte para a **porta 3000** e ative o **HTTPS**
+   (o EasyPanel emite o certificado Let's Encrypt sozinho).
+7. Clique em **Deploy** e acompanhe a aba **Logs**. Quando aparecerem estas duas linhas, está no
+   ar:
+
+   ```
+   ▲ Next.js 16.2.4
+   [agenda] agendador de lembretes ativo (a cada 30s)
+   ```
+
+Para atualizar depois, é só clicar em **Deploy** de novo (ou ligar o deploy automático por
+webhook na aba **Source**).
+
+### VPS sem painel, só com Docker
 
 ```bash
-git clone https://github.com/grazivaz/pvaventurasdafe.git
+git clone -b claude/web-app-creation-dxm4jh https://github.com/grazivaz/pvaventurasdafe.git
 cd pvaventurasdafe
-docker build -t agenda .
-docker volume create agenda_dados
-docker run -d --name agenda --restart unless-stopped \
-  -p 3000:3000 -v agenda_dados:/data agenda
+docker compose up -d --build
 ```
 
 Coloque um nginx ou o Caddy na frente para servir por HTTPS — as notificações do navegador só

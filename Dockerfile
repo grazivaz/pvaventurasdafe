@@ -10,7 +10,11 @@ RUN npm ci
 
 FROM base AS builder
 WORKDIR /app
-ENV NEXT_TELEMETRY_DISABLED=1
+# Variáveis NEXT_PUBLIC_* entram no código do navegador durante o build,
+# então o fuso precisa estar definido aqui, e não só na hora de rodar.
+ARG NEXT_PUBLIC_APP_TIMEZONE=America/Sao_Paulo
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    NEXT_PUBLIC_APP_TIMEZONE=$NEXT_PUBLIC_APP_TIMEZONE
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
