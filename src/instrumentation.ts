@@ -1,0 +1,7 @@
+export async function register() {
+  // Só o runtime Node.js tem timers de longa duração.
+  if (process.env.NEXT_RUNTIME !== "nodejs") return;
+
+  const { startReminderScheduler } = await import("./lib/scheduler");
+  startReminderScheduler();
+}

@@ -20,6 +20,10 @@
 # production
 /build
 
+# dados da agenda (tarefas, inscrições de push e chaves VAPID)
+/.data
+/.data-*
+
 # misc
 .DS_Store
 *.pem

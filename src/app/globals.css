@@ -1,31 +1,172 @@
 @import "tailwindcss";
 
 :root {
-  --background: #030712;
-  --foreground: #f9fafb;
+  color-scheme: light;
+
+  --canvas: #f7f4fa;
+  --glow-a: #e9e1ff;
+  --glow-b: #ffe3ee;
+  --surface: #ffffff;
+  --surface-muted: #f4f0f8;
+  --ink: #211c2f;
+  --ink-soft: #4b4360;
+  --muted: #857d95;
+  --line: #ebe5f1;
+  --line-strong: #dcd3e7;
+  --brand: #7c5cff;
+  --success: #12a37b;
+  --danger: #e0396b;
+
+  --shadow-card: 0 1px 2px rgb(33 28 47 / 0.04), 0 10px 30px -18px rgb(33 28 47 / 0.35);
+  --shadow-float: 0 8px 20px -6px rgb(33 28 47 / 0.28), 0 24px 48px -24px rgb(33 28 47 / 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --canvas: #100d18;
+    --glow-a: #241a45;
+    --glow-b: #3a1830;
+    --surface: #191527;
+    --surface-muted: #211c33;
+    --ink: #f3effa;
+    --ink-soft: #c8c1da;
+    --muted: #9a92ad;
+    --line: #272134;
+    --line-strong: #3a3350;
+    --brand: #9c85ff;
+    --success: #35c79c;
+    --danger: #ff6d95;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px -18px rgb(0 0 0 / 0.8);
+    --shadow-float: 0 8px 20px -6px rgb(0 0 0 / 0.5), 0 24px 48px -24px rgb(0 0 0 / 0.9);
+  }
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-brand: var(--brand);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), var(--font-geist-sans), Georgia, serif;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  min-height: 100svh;
+  background-color: var(--canvas);
+  background-image:
+    radial-gradient(60rem 40rem at 12% -10%, var(--glow-a), transparent 60%),
+    radial-gradient(50rem 36rem at 105% 8%, var(--glow-b), transparent 62%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #374151 transparent;
+/**
+ * Blocos com a cor de uma pessoa. Basta definir `--person` no style e as
+ * variações abaixo se adaptam sozinhas ao tema claro ou escuro.
+ */
+.person-theme {
+  --person-tint: color-mix(in oklab, var(--person) 12%, var(--surface));
+  --person-tint-strong: color-mix(in oklab, var(--person) 22%, var(--surface));
+  --person-line: color-mix(in oklab, var(--person) 34%, var(--surface));
+  --person-text: color-mix(in oklab, var(--person) 62%, var(--ink));
 }
 
-*::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+@media (prefers-color-scheme: dark) {
+  .person-theme {
+    --person-tint: color-mix(in oklab, var(--person) 20%, var(--surface));
+    --person-tint-strong: color-mix(in oklab, var(--person) 32%, var(--surface));
+    --person-line: color-mix(in oklab, var(--person) 45%, var(--surface));
+    --person-text: color-mix(in oklab, var(--person) 55%, var(--ink));
+  }
 }
 
-*::-webkit-scrollbar-track {
-  background: transparent;
+.no-scrollbar {
+  scrollbar-width: none;
 }
 
-*::-webkit-scrollbar-thumb {
-  background-color: #374151;
-  border-radius: 3px;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes agenda-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes agenda-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes agenda-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes agenda-pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--brand) 45%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 1.1rem color-mix(in oklab, var(--brand) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--brand) 0%, transparent);
+  }
+}
+
+.animate-fade-in {
+  animation: agenda-fade-in 0.25s ease-out both;
+}
+
+.animate-rise {
+  animation: agenda-rise 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-sheet-up {
+  animation: agenda-sheet-up 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-pulse-ring {
+  animation: agenda-pulse-ring 1.8s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-rise,
+  .animate-sheet-up,
+  .animate-pulse-ring {
+    animation: none;
+  }
 }

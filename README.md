@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Agenda — Julyana & Grazielle
 
-## Getting Started
+Agenda on-line compartilhada por duas pessoas, sem login e sem senha. Serve para anotar as
+tarefas do dia a dia (mercado, médico, remédio, contas) e receber um alerta no celular quando a
+hora chega.
 
-First, run the development server:
+## Como funciona
+
+- **Quem é você?** A primeira tela pede o nome. A escolha fica guardada no aparelho, então só
+  aparece uma vez. Cada pessoa tem uma cor — Julyana é violeta, Grazielle é rosa — e toda tarefa
+  fica com a tag de quem anotou.
+- **Semana a semana.** A agenda mostra de domingo a sábado. Todo domingo a tela já abre na semana
+  nova, e as setas ‹ › levam para as outras semanas.
+- **Lembrete na hora.** Ao criar a tarefa você escolhe a antecedência (na hora, 30 min antes,
+  1 dia antes…) e se o aviso vai para as duas ou só para quem anotou. Na hora certa o celular
+  recebe uma notificação — mesmo com o app fechado. Se a agenda estiver aberta, um alarme aparece
+  na tela e toca um som.
+- **Aviso quando a outra anota algo.** Quem adiciona uma tarefa dispara uma notificação para a
+  outra pessoa na mesma hora. Quem estiver com o app aberto ainda vê a tarefa surgir na lista com
+  um toque de aviso.
+
+## Ativando os alertas no celular
+
+1. Abra a agenda no navegador do celular.
+2. Toque em **Ativar** no cartão "Ativar alertas" e permita as notificações.
+3. Use o botão **testar** para conferir que o aviso chega.
+
+No **iPhone** o site precisa estar instalado na tela de início para poder notificar: toque em
+Compartilhar → **Adicionar à Tela de Início**, abra a agenda por esse ícone e o botão de ativar
+aparece. No Android funciona direto pelo Chrome.
+
+## Rodando no computador
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra <http://localhost:3000>. As notificações do navegador exigem HTTPS; para testá-las na sua
+máquina use `npx next dev --experimental-https`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Publicando
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+O app precisa de um servidor Node que fique **sempre ligado**, porque é ele quem confere os
+lembretes de 30 em 30 segundos e dispara as notificações.
 
-## Learn More
+### Opção recomendada — servidor com disco (Railway, Render, Fly.io, VPS)
 
-To learn more about Next.js, take a look at the following resources:
+1. Aponte o serviço para este repositório; o comando de build é `npm run build` e o de start é
+   `npm run start`.
+2. Monte um disco persistente e defina `AGENDA_DATA_DIR` apontando para ele (por exemplo
+   `/data`). Sem isso, os dados somem a cada reinício.
+3. Pronto — as chaves de notificação são geradas sozinhas na primeira execução.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Opção Vercel (ou outra hospedagem serverless)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Lá não existe disco fixo nem processo contínuo, então são necessários dois ajustes:
 
-## Deploy on Vercel
+1. Crie um banco Postgres grátis (Neon, Supabase, Vercel Postgres) e defina `DATABASE_URL`. As
+   tabelas são criadas automaticamente.
+2. Agende um cron externo (o [cron-job.org](https://cron-job.org) faz isso de graça) chamando
+   `https://SEU-SITE/api/lembretes` de minuto em minuto, senão os lembretes não saem. Defina
+   `CRON_SECRET` e chame a URL com `?token=SEU-SEGREDO` para ninguém mais conseguir acionar.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Variáveis de ambiente
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Todas são opcionais — sem nenhuma delas o app roda guardando os dados em `.data/agenda.json`.
+
+| Variável | Para que serve |
+| --- | --- |
+| `AGENDA_DATA_DIR` | Pasta onde o arquivo de dados é gravado (padrão `.data`). |
+| `DATABASE_URL` | Se definida, os dados vão para o Postgres em vez do arquivo. |
+| `NEXT_PUBLIC_APP_TIMEZONE` | Fuso usado nos horários (padrão `America/Sao_Paulo`). |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Chaves de notificação. Se faltarem, são geradas e guardadas junto com os dados. |
+| `VAPID_SUBJECT` | E-mail de contato exigido pelo serviço de push (`mailto:voce@exemplo.com`). |
+| `CRON_SECRET` | Protege a rota `/api/lembretes` quando um cron externo a chama. |
+| `AGENDA_DISABLE_SCHEDULER` | `1` desliga o agendador interno (use quando o cron externo cuidar disso). |
+
+## Backup
+
+Com o modo arquivo, tudo mora em um único JSON (`.data/agenda.json` por padrão): tarefas,
+inscrições de notificação e as chaves de push. Copiar esse arquivo é o backup completo.
+
+## Como o projeto é organizado
+
+```
+src/app/            páginas (/ e /agenda) e rotas de API
+src/components/     tela da agenda, formulário, alarme e avisos
+src/hooks/          sincronização das tarefas, push e alarme
+src/lib/            datas, pessoas, tipos, persistência e envio de push
+src/instrumentation.ts  liga o agendador de lembretes quando o servidor sobe
+public/sw.js        service worker que exibe as notificações
+```

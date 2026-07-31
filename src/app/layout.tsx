@@ -1,21 +1,38 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Fraunces, Geist } from "next/font/google";
+
 import "./globals.css";
-import Navigation from "@/components/Navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const fraunces = Fraunces({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "ViralLab — Canal Dark no YouTube",
-  description: "Pesquise tendências, analise fórmulas virais e gere todo o conteúdo do seu canal dark no YouTube.",
+  title: "Agenda — Julyana & Grazielle",
+  description: "As tarefas da semana das duas, com lembrete no celular na hora certa.",
+  applicationName: "Agenda",
+  appleWebApp: {
+    capable: true,
+    title: "Agenda",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f4fa" },
+    { media: "(prefers-color-scheme: dark)", color: "#100d18" },
+  ],
 };
 
 export default function RootLayout({
@@ -24,14 +41,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-gray-950 text-white">
-        <Navigation />
-        <main className="flex-1">{children}</main>
-      </body>
+    <html lang="pt-BR" className={`${geistSans.variable} ${fraunces.variable} antialiased`}>
+      <body>{children}</body>
     </html>
   );
 }
