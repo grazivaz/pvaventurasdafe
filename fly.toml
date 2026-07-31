@@ -1,0 +1,27 @@
+# Configuração do Fly.io. Troque `app` por um nome livre antes do primeiro
+# deploy (ou deixe o `fly launch` preencher para você).
+app = "agenda-julyana-grazielle"
+primary_region = "gru"
+
+[build]
+
+[env]
+  AGENDA_DATA_DIR = "/data"
+  NEXT_PUBLIC_APP_TIMEZONE = "America/Sao_Paulo"
+  PORT = "3000"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_start_machines = true
+  # A máquina precisa ficar acordada: é ela que confere os lembretes.
+  auto_stop_machines = false
+  min_machines_running = 1
+
+[[mounts]]
+  source = "agenda_dados"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

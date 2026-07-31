@@ -1,0 +1,20 @@
+# Blueprint do Render. O disco exige um plano pago (Starter): sem ele os
+# dados somem a cada reinício e os lembretes param quando o serviço dorme.
+services:
+  - type: web
+    name: agenda
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: oregon
+    healthCheckPath: /api/tarefas
+    autoDeploy: true
+    envVars:
+      - key: AGENDA_DATA_DIR
+        value: /data
+      - key: NEXT_PUBLIC_APP_TIMEZONE
+        value: America/Sao_Paulo
+    disk:
+      name: dados
+      mountPath: /data
+      sizeGB: 1

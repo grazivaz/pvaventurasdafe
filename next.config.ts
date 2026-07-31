@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Gera `.next/standalone`, com só o necessário para rodar em container.
+  output: "standalone",
   // Bibliotecas de servidor que não devem ser empacotadas pelo bundler.
   serverExternalPackages: ["web-push", "pg"],
   async headers() {
