@@ -89,39 +89,102 @@ O `fly.toml` já fixa a região de São Paulo (`gru`) e impede a máquina de dor
 
 ### VPS com EasyPanel (Hostinger e afins)
 
-Antes de começar, aponte um subdomínio para o IP da VPS (registro **A** no seu provedor de DNS),
-por exemplo `agenda.seudominio.com.br`. O endereço precisa ser HTTPS, senão o navegador não
-deixa ativar as notificações.
+Guia detalhado, para quem nunca usou o painel. Os nomes dos campos mudam um pouco de versão
+para versão; onde isso acontece, o nome alternativo vem entre parênteses.
 
-No EasyPanel:
+#### 1. Um endereço com HTTPS
 
-1. Abra o projeto e clique em **+ Service → App**. Dê o nome `agenda`.
-2. Na aba **Source**, escolha **GitHub** (ou **Git**) e preencha:
-   - Repositório: `grazivaz/pvaventurasdafe` (é público, não precisa de token)
-   - Branch: `claude/web-app-creation-dxm4jh`
-   - Build path: `/`
-3. Na aba **Build**, escolha o método **Dockerfile** e deixe o caminho como `Dockerfile`.
-4. Na aba **Environment**, cole:
+As notificações do navegador **só funcionam em `https://`**, e para ter HTTPS é preciso um
+domínio — o IP puro não serve. Escolha um caminho:
 
-   ```
-   AGENDA_DATA_DIR=/data
-   VAPID_SUBJECT=mailto:seu-email@exemplo.com
-   ```
+- **Já tem um domínio:** no painel de DNS dele, crie um registro do tipo **A** com o nome
+  `agenda` apontando para o IP da sua VPS. O endereço final fica `agenda.seudominio.com.br`.
+- **Não tem domínio:** use um grátis no <https://www.duckdns.org> (entre com a conta Google,
+  escolha um nome como `agenda-jg` e coloque o IP da VPS no campo "current ip"). Seu endereço
+  fica `agenda-jg.duckdns.org`.
 
-5. Na aba **Mounts**, adicione um **Volume**: nome `dados`, caminho de montagem `/data`.
-   Esse é o passo que faz as tarefas sobreviverem a cada atualização.
-6. Na aba **Domains**, adicione o subdomínio, aponte para a **porta 3000** e ative o **HTTPS**
-   (o EasyPanel emite o certificado Let's Encrypt sozinho).
-7. Clique em **Deploy** e acompanhe a aba **Logs**. Quando aparecerem estas duas linhas, está no
-   ar:
+O IP da VPS aparece no painel da Hostinger, em **VPS → visão geral**. O DNS pode levar alguns
+minutos para propagar.
 
-   ```
-   ▲ Next.js 16.2.4
-   [agenda] agendador de lembretes ativo (a cada 30s)
-   ```
+#### 2. Criar o serviço
 
-Para atualizar depois, é só clicar em **Deploy** de novo (ou ligar o deploy automático por
-webhook na aba **Source**).
+No EasyPanel, entre em um projeto (ou crie um com **+ Project**) e clique em
+**+ Service → App**. Dê o nome `agenda` e confirme. O EasyPanel abre a página do serviço com
+abas no topo — **General**, **Environment**, **Domains**, **Mounts**, **Advanced**, **Logs**,
+**Deployments**.
+
+> Importante: **Source** e **Build** não são abas. São dois blocos dentro da aba **General**,
+> e **cada bloco tem o próprio botão Save**. Salve um antes de mexer no outro.
+
+#### 3. Bloco "Source" (aba General)
+
+Escolha a opção **Git** — não a "Github". A "Github" pede conexão de conta; a "Git" só quer a
+URL, e este repositório é público. Preencha:
+
+| Campo | Valor |
+| --- | --- |
+| Repository URL (Repo) | `https://github.com/grazivaz/pvaventurasdafe.git` |
+| Branch (Ref) | `claude/web-app-creation-dxm4jh` |
+| Build Path (Path) | `/` |
+
+Copie e cole o nome do branch — ele é comprido e um caractere errado faz o deploy falhar.
+Clique em **Save**.
+
+#### 4. Bloco "Build" (aba General)
+
+Em **Build Method** escolha **Dockerfile**. Aparece um campo de caminho: deixe `Dockerfile`
+(sem barra no começo). Clique em **Save**.
+
+#### 5. Aba "Environment"
+
+É uma caixa de texto livre, uma variável por linha. Cole:
+
+```
+AGENDA_DATA_DIR=/data
+VAPID_SUBJECT=mailto:seu-email@exemplo.com
+```
+
+Clique em **Save**.
+
+#### 6. Aba "Mounts"
+
+Clique em **Add Mount** e escolha o tipo **Volume**:
+
+| Campo | Valor |
+| --- | --- |
+| Name | `dados` |
+| Mount Path | `/data` |
+
+Confirme. Esse é o passo que faz as tarefas sobreviverem a cada atualização — sem ele, tudo
+some no próximo deploy.
+
+#### 7. Aba "Domains"
+
+Clique em **Add Domain**:
+
+| Campo | Valor |
+| --- | --- |
+| Host | o endereço do passo 1 (ex.: `agenda.seudominio.com.br`) |
+| Port | `3000` |
+| HTTPS | ligado |
+| Path | `/` |
+
+O EasyPanel pede o certificado ao Let's Encrypt sozinho. Se der erro de certificado, quase
+sempre é o DNS que ainda não propagou — espere alguns minutos e tente de novo.
+
+#### 8. Deploy
+
+Clique em **Deploy** (canto superior direito) e abra a aba **Deployments** ou **Logs**. O
+primeiro build demora alguns minutos. Está no ar quando aparecerem estas duas linhas:
+
+```
+▲ Next.js 16.2.4
+[agenda] agendador de lembretes ativo (a cada 30s)
+```
+
+A segunda linha é a confirmação de que os lembretes vão disparar na hora certa.
+
+Para atualizar no futuro, basta clicar em **Deploy** de novo.
 
 ### VPS sem painel, só com Docker
 
