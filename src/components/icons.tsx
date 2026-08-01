@@ -105,3 +105,14 @@ export function SparkIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+export function RepeatIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M6 7.5h9a3.5 3.5 0 0 1 3.5 3.5v1.5" />
+      <path d="m15.5 4.5 3 3-3 3" />
+      <path d="M18 16.5H9A3.5 3.5 0 0 1 5.5 13v-1.5" />
+      <path d="m8.5 19.5-3-3 3-3" />
+    </svg>
+  );
+}

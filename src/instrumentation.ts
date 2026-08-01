@@ -4,4 +4,7 @@ export async function register() {
 
   const { startReminderScheduler } = await import("./lib/scheduler");
   startReminderScheduler();
+
+  const { startRoutineReminderScheduler } = await import("./lib/routines/scheduler");
+  startRoutineReminderScheduler();
 }

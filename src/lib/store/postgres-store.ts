@@ -1,5 +1,6 @@
 import type { Pool } from "pg";
 
+import type { Routine } from "../routines/types";
 import type { PushSubscriptionRecord, Task } from "../types";
 import type { AgendaStore, VapidKeys } from "./types";
 
@@ -15,6 +16,10 @@ const SCHEMA = `
   CREATE TABLE IF NOT EXISTS agenda_settings (
     key text PRIMARY KEY,
     value jsonb NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS agenda_rotinas (
+    id text PRIMARY KEY,
+    data jsonb NOT NULL
   );
 `;
 
@@ -123,5 +128,39 @@ export class PostgresStore implements AgendaStore {
        ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
       [JSON.stringify(keys)],
     );
+  }
+
+  async listRoutines(): Promise<Routine[]> {
+    const rows = await this.query<{ data: Routine }>("SELECT data FROM agenda_rotinas");
+    return rows.map((row) => row.data);
+  }
+
+  async getRoutine(id: string): Promise<Routine | null> {
+    const rows = await this.query<{ data: Routine }>(
+      "SELECT data FROM agenda_rotinas WHERE id = $1",
+      [id],
+    );
+    return rows[0]?.data ?? null;
+  }
+
+  async insertRoutine(routine: Routine): Promise<Routine> {
+    await this.query("INSERT INTO agenda_rotinas (id, data) VALUES ($1, $2)", [
+      routine.id,
+      JSON.stringify(routine),
+    ]);
+    return routine;
+  }
+
+  async patchRoutine(id: string, patch: Partial<Routine>): Promise<Routine | null> {
+    const rows = await this.query<{ data: Routine }>(
+      "UPDATE agenda_rotinas SET data = data || $2::jsonb WHERE id = $1 RETURNING data",
+      [id, JSON.stringify(patch)],
+    );
+    return rows[0]?.data ?? null;
+  }
+
+  async removeRoutine(id: string): Promise<boolean> {
+    const rows = await this.query("DELETE FROM agenda_rotinas WHERE id = $1 RETURNING id", [id]);
+    return rows.length > 0;
   }
 }

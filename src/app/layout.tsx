@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist } from "next/font/google";
 
+import BottomNav from "@/components/BottomNav";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -42,7 +44,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${geistSans.variable} ${fraunces.variable} antialiased`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <BottomNav />
+      </body>
     </html>
   );
 }

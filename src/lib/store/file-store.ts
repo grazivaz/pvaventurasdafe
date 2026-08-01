@@ -1,6 +1,7 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import type { Routine } from "../routines/types";
 import type { PushSubscriptionRecord, Task } from "../types";
 import type { AgendaStore, VapidKeys } from "./types";
 
@@ -8,9 +9,10 @@ type FileShape = {
   tasks: Task[];
   subscriptions: PushSubscriptionRecord[];
   vapid: VapidKeys | null;
+  rotinas: Routine[];
 };
 
-const EMPTY: FileShape = { tasks: [], subscriptions: [], vapid: null };
+const EMPTY: FileShape = { tasks: [], subscriptions: [], vapid: null, rotinas: [] };
 
 /**
  * Guarda tudo num único JSON. Simples de operar e de fazer backup — basta
@@ -35,6 +37,7 @@ export class FileStore implements AgendaStore {
         tasks: parsed.tasks ?? [],
         subscriptions: parsed.subscriptions ?? [],
         vapid: parsed.vapid ?? null,
+        rotinas: parsed.rotinas ?? [],
       };
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === "ENOENT") return { ...EMPTY };
@@ -126,6 +129,42 @@ export class FileStore implements AgendaStore {
   async setVapidKeys(keys: VapidKeys): Promise<void> {
     await this.transact((data) => {
       data.vapid = keys;
+    });
+  }
+
+  async listRoutines(): Promise<Routine[]> {
+    const data = await this.read();
+    return data.rotinas;
+  }
+
+  async getRoutine(id: string): Promise<Routine | null> {
+    const data = await this.read();
+    return data.rotinas.find((routine) => routine.id === id) ?? null;
+  }
+
+  async insertRoutine(routine: Routine): Promise<Routine> {
+    return this.transact((data) => {
+      data.rotinas.push(routine);
+      return routine;
+    });
+  }
+
+  async patchRoutine(id: string, patch: Partial<Routine>): Promise<Routine | null> {
+    return this.transact((data) => {
+      const index = data.rotinas.findIndex((routine) => routine.id === id);
+      if (index === -1) return null;
+      const updated = { ...data.rotinas[index], ...patch, id };
+      data.rotinas[index] = updated;
+      return updated;
+    });
+  }
+
+  async removeRoutine(id: string): Promise<boolean> {
+    return this.transact((data) => {
+      const index = data.rotinas.findIndex((routine) => routine.id === id);
+      if (index === -1) return false;
+      data.rotinas.splice(index, 1);
+      return true;
     });
   }
 }

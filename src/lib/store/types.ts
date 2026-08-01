@@ -1,3 +1,4 @@
+import type { Routine } from "../routines/types";
 import type { PushSubscriptionRecord, Task } from "../types";
 
 export type VapidKeys = { publicKey: string; privateKey: string };
@@ -19,4 +20,10 @@ export interface AgendaStore {
 
   getVapidKeys(): Promise<VapidKeys | null>;
   setVapidKeys(keys: VapidKeys): Promise<void>;
+
+  listRoutines(): Promise<Routine[]>;
+  getRoutine(id: string): Promise<Routine | null>;
+  insertRoutine(routine: Routine): Promise<Routine>;
+  patchRoutine(id: string, patch: Partial<Routine>): Promise<Routine | null>;
+  removeRoutine(id: string): Promise<boolean>;
 }

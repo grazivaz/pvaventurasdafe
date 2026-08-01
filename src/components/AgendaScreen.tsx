@@ -139,7 +139,7 @@ function Agenda({ person }: { person: PersonId }) {
 
   return (
     <>
-      <main className="mx-auto w-full max-w-2xl px-4 pb-32">
+      <main className="mx-auto w-full max-w-2xl px-4 pb-[calc(var(--bottom-nav-h)+env(safe-area-inset-bottom)+6rem)]">
         <header className="flex items-center justify-between gap-3 pt-[max(1.25rem,env(safe-area-inset-top))]">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
@@ -263,7 +263,7 @@ function Agenda({ person }: { person: PersonId }) {
         type="button"
         onClick={() => abrirNova(diaSugerido)}
         style={personStyle(person)}
-        className="person-theme fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 z-40 flex items-center gap-2 rounded-full py-4 pl-5 pr-6 font-semibold text-white shadow-[var(--shadow-float)] transition active:scale-95"
+        className="person-theme fixed bottom-[calc(var(--bottom-nav-h)+env(safe-area-inset-bottom)+0.75rem)] right-5 z-40 flex items-center gap-2 rounded-full py-4 pl-5 pr-6 font-semibold text-white shadow-[var(--shadow-float)] transition active:scale-95"
       >
         <span
           aria-hidden
