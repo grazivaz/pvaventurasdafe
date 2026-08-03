@@ -28,10 +28,14 @@ export default function TaskRow({ task, now, onToggle, onEdit, onDelete }: Props
   const categoria = CATEGORIES[task.category] ?? CATEGORIES.outro;
   const lembrete = rotuloLembrete(task.remindMinutes);
   const atrasada = !task.done && taskInstant(task).getTime() < now;
+  // O lembrete já saiu e ninguém marcou como feita ainda — pulsa até alguém agir.
+  const pendenteAposAviso = !task.done && task.reminderSentAt !== null;
 
   return (
     <li
-      className="person-theme relative overflow-hidden rounded-2xl border border-line bg-surface shadow-[var(--shadow-card)]"
+      className={`person-theme relative overflow-hidden rounded-2xl border border-line bg-surface shadow-[var(--shadow-card)] ${
+        pendenteAposAviso ? "animate-pulse-alert" : ""
+      }`}
       style={personStyle(task.createdBy)}
     >
       <span

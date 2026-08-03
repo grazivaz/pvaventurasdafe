@@ -165,11 +165,26 @@ body {
   animation: agenda-pulse-ring 1.8s ease-out infinite;
 }
 
+@keyframes agenda-pulse-alert {
+  0%,
+  100% {
+    background-color: var(--surface);
+  }
+  50% {
+    background-color: color-mix(in oklab, var(--danger) 14%, var(--surface));
+  }
+}
+
+.animate-pulse-alert {
+  animation: agenda-pulse-alert 2s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
   .animate-rise,
   .animate-sheet-up,
-  .animate-pulse-ring {
+  .animate-pulse-ring,
+  .animate-pulse-alert {
     animation: none;
   }
 }
