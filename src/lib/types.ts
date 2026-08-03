@@ -7,6 +7,9 @@ export const CATEGORY_IDS = [
   "casa",
   "contas",
   "pessoal",
+  "jose",
+  "acougue",
+  "cachorros",
   "outro",
 ] as const;
 
@@ -25,6 +28,9 @@ export const CATEGORIES: Record<CategoryId, Category> = {
   casa: { id: "casa", label: "Casa", emoji: "🏠" },
   contas: { id: "contas", label: "Contas", emoji: "💳" },
   pessoal: { id: "pessoal", label: "Pessoal", emoji: "✨" },
+  jose: { id: "jose", label: "José", emoji: "👶🏼" },
+  acougue: { id: "acougue", label: "Açougue", emoji: "🥩" },
+  cachorros: { id: "cachorros", label: "Cachorros", emoji: "🐶" },
   outro: { id: "outro", label: "Outro", emoji: "📌" },
 };
 

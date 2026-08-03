@@ -112,6 +112,33 @@ function Agenda({ person }: { person: PersonId }) {
   const pendentes = daSemana.filter((task) => !task.done).length;
   const deHoje = (porDia.get(hoje) ?? []).filter((task) => !task.done).length;
 
+  /**
+   * Frase do topo. `alerta` liga a faixa vermelha — só quando há tarefa
+   * pendente hoje, para o vermelho não virar paisagem e perder o efeito.
+   */
+  const resumo = useMemo(() => {
+    if (status === "carregando") return { texto: "Carregando as tarefas…", alerta: false };
+    if (status === "erro") {
+      return {
+        texto: "Sem conexão com o servidor. Vou tentar de novo em instantes.",
+        alerta: false,
+      };
+    }
+    if (deHoje > 0) {
+      return {
+        texto: `Você tem ${deHoje} ${deHoje === 1 ? "tarefa" : "tarefas"} para hoje.`,
+        alerta: true,
+      };
+    }
+    if (pendentes > 0) {
+      return {
+        texto: `Nada para hoje. ${pendentes} ${pendentes === 1 ? "tarefa" : "tarefas"} no resto da semana.`,
+        alerta: false,
+      };
+    }
+    return { texto: "Semana livre por enquanto. 🌿", alerta: false };
+  }, [status, deHoje, pendentes]);
+
   // Ao abrir, deixa o dia de hoje visível sem precisar rolar a tela.
   useEffect(() => {
     if (jaRolou.current || status !== "pronto" || semanas !== 0) return;
@@ -162,17 +189,13 @@ function Agenda({ person }: { person: PersonId }) {
           </button>
         </header>
 
-        <p className="mt-2 text-sm text-ink-soft">
-          {status === "carregando"
-            ? "Carregando as tarefas…"
-            : status === "erro"
-              ? "Sem conexão com o servidor. Vou tentar de novo em instantes."
-              : deHoje > 0
-                ? `Você tem ${deHoje} ${deHoje === 1 ? "tarefa" : "tarefas"} para hoje.`
-                : pendentes > 0
-                  ? `Nada para hoje. ${pendentes} ${pendentes === 1 ? "tarefa" : "tarefas"} no resto da semana.`
-                  : "Semana livre por enquanto. 🌿"}
-        </p>
+        {resumo.alerta ? (
+          <p className="mt-2 rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white dark:bg-red-500">
+            {resumo.texto}
+          </p>
+        ) : (
+          <p className="mt-2 text-sm text-ink-soft">{resumo.texto}</p>
+        )}
 
         <div className="mt-4">
           <AlertsCard person={person} />
