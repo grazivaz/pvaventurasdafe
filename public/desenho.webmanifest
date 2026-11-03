@@ -1,0 +1,17 @@
+{
+  "name": "Rabisquinhos",
+  "short_name": "Rabisquinhos",
+  "description": "Colorir e desenhar para bebês — sem anúncios, sem cadastro.",
+  "start_url": "/desenho",
+  "scope": "/desenho",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#FFF4DC",
+  "theme_color": "#FFF4DC",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "/rabisquinhos-icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/rabisquinhos-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/rabisquinhos-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
