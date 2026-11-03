@@ -5,10 +5,20 @@ import ColoringBook from "./ColoringBook";
 import DrawingPad from "./DrawingPad";
 import DrawingSvg from "./DrawingSvg";
 import { DRAWINGS } from "./drawings";
+import { SAVE_PREVIEW_EVENT } from "./exportImage";
 import HoldButton from "./HoldButton";
 import ParentPanel, { type ParentAction } from "./ParentPanel";
 import { configureSound, speak, tap, unlockAudio } from "./sound";
 import { DEFAULT_SETTINGS, SETTINGS_KEY, coloringKey, load, save, type Settings } from "./storage";
+
+/** Entrada extra no histórico para o "voltar" do celular não sair do app. */
+function guardHistory() {
+  try {
+    window.history.pushState({ rabisquinhos: true }, "");
+  } catch {
+    /* ambiente sem histórico (iframe restrito) */
+  }
+}
 
 type Screen = { name: "home" } | { name: "pick" } | { name: "color"; index: number } | { name: "draw" };
 
@@ -122,6 +132,7 @@ export default function ToddlerArt() {
     typeof window === "undefined" ? DEFAULT_SETTINGS : { ...DEFAULT_SETTINGS, ...load(SETTINGS_KEY, {}) },
   );
   const [parent, setParent] = useState<ParentAction[] | null>(null);
+  const [savePreview, setSavePreview] = useState<string | null>(null);
   const screenRef = useRef(screen);
   const wakeLock = useRef<{ release: () => Promise<void> } | null>(null);
 
@@ -141,11 +152,17 @@ export default function ToddlerArt() {
   // Bloqueia gestos do navegador que tiram a criança do app (zoom de pinça no iOS, menu de toque longo).
   useEffect(() => {
     const stop = (e: Event) => e.preventDefault();
+    const stopMenu = (e: Event) => {
+      if (!(e.target instanceof HTMLImageElement && e.target.dataset.savable)) e.preventDefault();
+    };
+    const onPreview = (e: Event) => setSavePreview((e as CustomEvent<string>).detail);
     document.addEventListener("gesturestart", stop);
-    document.addEventListener("contextmenu", stop);
+    document.addEventListener("contextmenu", stopMenu);
+    window.addEventListener(SAVE_PREVIEW_EVENT, onPreview);
     return () => {
       document.removeEventListener("gesturestart", stop);
-      document.removeEventListener("contextmenu", stop);
+      document.removeEventListener("contextmenu", stopMenu);
+      window.removeEventListener(SAVE_PREVIEW_EVENT, onPreview);
     };
   }, []);
 
@@ -182,16 +199,14 @@ export default function ToddlerArt() {
       const up: Screen = cur.name === "color" ? { name: "pick" } : { name: "home" };
       setParent(null);
       setScreen(up);
-      if (up.name !== "home") window.history.pushState({ rabisquinhos: true }, "");
+      if (up.name !== "home") guardHistory();
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
   const go = (next: Screen) => {
-    if (next.name !== "home" && !window.history.state?.rabisquinhos) {
-      window.history.pushState({ rabisquinhos: true }, "");
-    }
+    if (next.name !== "home" && !window.history.state?.rabisquinhos) guardHistory();
     setScreen(next);
   };
 
@@ -200,7 +215,11 @@ export default function ToddlerArt() {
     tap();
     void requestWakeLock();
     if (settings.fullscreen && !document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.({ navigationUI: "hide" }).catch(() => {});
+      try {
+        document.documentElement.requestFullscreen?.({ navigationUI: "hide" }).catch(() => {});
+      } catch {
+        /* tela cheia indisponível (iPhone, iframes) */
+      }
     }
   };
 
@@ -263,6 +282,37 @@ export default function ToddlerArt() {
       )}
 
       {screen.name === "draw" && <DrawingPad onHome={goHome} onParent={openParent} />}
+
+      {savePreview && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/70 p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Imagem para salvar"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={savePreview}
+            alt="Desenho para salvar"
+            data-savable="1"
+            className="max-h-[70%] max-w-full rounded-2xl bg-white shadow-2xl"
+            style={{ WebkitTouchCallout: "default", userSelect: "auto", touchAction: "auto" }}
+          />
+          <p className="max-w-sm text-center text-base font-semibold text-white">
+            Toque e segure a imagem para salvar ou compartilhar.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              URL.revokeObjectURL(savePreview);
+              setSavePreview(null);
+            }}
+            className="rounded-full bg-white px-6 py-3 font-bold text-gray-900"
+          >
+            Fechar
+          </button>
+        </div>
+      )}
 
       {parent && (
         <ParentPanel settings={settings} onChange={updateSettings} actions={parent} onClose={() => setParent(null)} />

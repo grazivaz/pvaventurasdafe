@@ -1,5 +1,12 @@
+/** Evento usado quando o ambiente não permite baixar arquivos (ex.: prévia em Artifact). */
+export const SAVE_PREVIEW_EVENT = "rq-save-preview";
+
 /** Compartilha (celular) ou baixa (computador) a imagem. */
 export async function shareOrDownload(blob: Blob, filename: string) {
+  if ((globalThis as { __RQ_PREVIEW_SAVE__?: boolean }).__RQ_PREVIEW_SAVE__) {
+    window.dispatchEvent(new CustomEvent(SAVE_PREVIEW_EVENT, { detail: URL.createObjectURL(blob) }));
+    return;
+  }
   const file = new File([blob], filename, { type: "image/png" });
   const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
   if (nav.canShare?.({ files: [file] })) {

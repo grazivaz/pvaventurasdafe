@@ -1,6 +1,6 @@
 "use client";
 
-import { COLORS, RAINBOW } from "./palette";
+import { COLORS, RAINBOW } from "./colors";
 
 type Props = {
   selected: string;

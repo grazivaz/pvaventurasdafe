@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Bursts, useBursts } from "./Effects";
 import { canvasToBlob, shareOrDownload } from "./exportImage";
 import Palette from "./Palette";
-import { MAGIC_CYCLE, RAINBOW, colorById } from "./palette";
+import { MAGIC_CYCLE, RAINBOW, colorById } from "./colors";
 import type { ParentAction } from "./ParentPanel";
 import { note, speak, stamp as stampSound, tap, vibrate } from "./sound";
 import { PAD_KEY, load, save } from "./storage";

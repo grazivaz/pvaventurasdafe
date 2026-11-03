@@ -6,7 +6,7 @@ import { fillableKeys, type Drawing } from "./drawings";
 import { Bursts, Celebration, useBursts } from "./Effects";
 import { shareOrDownload, svgToPngBlob } from "./exportImage";
 import Palette from "./Palette";
-import { COLORS, MAGIC_CYCLE, RAINBOW, colorById } from "./palette";
+import { COLORS, MAGIC_CYCLE, RAINBOW, colorById } from "./colors";
 import { fanfare, pop, speak, tap, vibrate } from "./sound";
 import { coloringKey, load, remove, save } from "./storage";
 import TopBar, { BarButton } from "./TopBar";
