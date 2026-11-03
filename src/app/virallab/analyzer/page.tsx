@@ -271,10 +271,10 @@ function AnalyzerContent() {
           {/* CTA */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 flex flex-wrap gap-3">
             <p className="text-gray-400 text-sm w-full">Próximos passos com esta fórmula:</p>
-            <Link href="/generator" className="bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors">
+            <Link href="/virallab/generator" className="bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors">
               ⚡ Gerar Títulos e SEO
             </Link>
-            <Link href="/script" className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors">
+            <Link href="/virallab/script" className="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors">
               📝 Criar Roteiro
             </Link>
           </div>

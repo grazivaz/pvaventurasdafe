@@ -1,4 +1,4 @@
-## 🖍️ Rabisquinhos — `/desenho`
+## 🖍️ Rabisquinhos — página inicial (`/`)
 
 App de desenho para bebês (1+ ano): livro de colorir de toque (13 desenhos) e tela em branco.
 
@@ -8,7 +8,7 @@ App de desenho para bebês (1+ ano): livro de colorir de toque (13 desenhos) e t
 - **Trava para os pais:** 🏠 e 🔒 só funcionam segurando (1,5 s / 2 s). A área dos pais tem salvar imagem, apagar, sons, voz e dicas de Acesso Guiado / Fixar app.
 - **Privacidade:** sem anúncios, sem cadastro, sem rede — tudo fica no `localStorage` do aparelho. Instalável na tela inicial (manifest em tela cheia).
 
-Código em `src/components/desenho/` e `src/app/desenho/`.
+Código em `src/components/desenho/` e `src/app/(desenho)/`. O ViralLab fica em `/virallab`.
 
 ---
 

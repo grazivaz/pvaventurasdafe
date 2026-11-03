@@ -56,7 +56,7 @@ export default function TrendingPage() {
       description: video.description.slice(0, 500),
       tags: video.tags.slice(0, 15).join(","),
     });
-    window.location.href = `/analyzer?${params}`;
+    window.location.href = `/virallab/analyzer?${params}`;
   };
 
   return (

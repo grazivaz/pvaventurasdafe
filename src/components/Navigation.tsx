@@ -4,12 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: "🏠" },
-  { href: "/trending", label: "Pesquisa Viral", icon: "🔥" },
-  { href: "/analyzer", label: "Analisador", icon: "🔬" },
-  { href: "/generator", label: "Gerador", icon: "⚡" },
-  { href: "/script", label: "Roteiro", icon: "📝" },
-  { href: "/strategy", label: "Estratégia", icon: "🎯" },
+  { href: "/virallab", label: "Dashboard", icon: "🏠" },
+  { href: "/virallab/trending", label: "Pesquisa Viral", icon: "🔥" },
+  { href: "/virallab/analyzer", label: "Analisador", icon: "🔬" },
+  { href: "/virallab/generator", label: "Gerador", icon: "⚡" },
+  { href: "/virallab/script", label: "Roteiro", icon: "📝" },
+  { href: "/virallab/strategy", label: "Estratégia", icon: "🎯" },
 ];
 
 export default function Navigation() {
@@ -19,7 +19,7 @@ export default function Navigation() {
     <nav className="bg-gray-900 border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/virallab" className="flex items-center gap-2">
             <span className="text-2xl">🚀</span>
             <span className="text-white font-bold text-xl tracking-tight">
               Viral<span className="text-red-500">Lab</span>

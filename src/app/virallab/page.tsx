@@ -2,35 +2,35 @@ import Link from "next/link";
 
 const features = [
   {
-    href: "/trending",
+    href: "/virallab/trending",
     icon: "🔥",
     title: "Pesquisa Viral",
     description: "Pesquise vídeos em alta no YouTube por nicho e identifique as tendências do momento.",
     color: "from-orange-600 to-red-600",
   },
   {
-    href: "/analyzer",
+    href: "/virallab/analyzer",
     icon: "🔬",
     title: "Analisador de Fórmulas",
     description: "Cole um vídeo viral e a IA decifra sua fórmula de sucesso para você replicar em outro tema.",
     color: "from-purple-600 to-pink-600",
   },
   {
-    href: "/generator",
+    href: "/virallab/generator",
     icon: "⚡",
     title: "Gerador de Conteúdo",
     description: "Gere títulos virais, descrições SEO, tags, prompts de thumbnail e estratégia de SEO.",
     color: "from-yellow-600 to-orange-600",
   },
   {
-    href: "/script",
+    href: "/virallab/script",
     icon: "📝",
     title: "Roteiro Completo",
     description: "Crie roteiros completos estruturados para maximizar retenção e engajamento do vídeo.",
     color: "from-green-600 to-teal-600",
   },
   {
-    href: "/strategy",
+    href: "/virallab/strategy",
     icon: "🎯",
     title: "Estratégia de Canal",
     description: "Monte uma estratégia completa de canal dark com plano de crescimento e monetização.",
@@ -69,13 +69,13 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link
-              href="/trending"
+              href="/virallab/trending"
               className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl transition-colors"
             >
               🔥 Começar Pesquisa
             </Link>
             <Link
-              href="/strategy"
+              href="/virallab/strategy"
               className="bg-gray-800 hover:bg-gray-700 text-white font-bold px-6 py-3 rounded-xl transition-colors"
             >
               🎯 Ver Estratégia
