@@ -101,7 +101,8 @@ def http(url, data=None, tentativas=3):
 
 
 def initial_data(pagina):
-    m = re.search(r"var ytInitialData\s*=\s*(\{.*?\});\s*</script>", pagina, re.S)
+    m = re.search(r"(?:var ytInitialData|window\[\"ytInitialData\"\])\s*=\s*(\{.*?\});\s*</script>",
+                  pagina, re.S)
     if not m:
         if "consent.youtube.com" in pagina or "unusual traffic" in pagina:
             raise BloqueadoError("YouTube pediu consentimento/captcha.")
@@ -225,10 +226,18 @@ def buscar(busca, idioma, paginas):
     gl = PAIS_POR_IDIOMA[idioma]
     url = ("https://www.youtube.com/results?search_query=%s&sp=%s&hl=en&gl=%s"
            % (urllib.parse.quote_plus(busca), FILTRO_ESTE_MES_VIDEOS, gl))
-    pagina = http(url)
-    dados = initial_data(pagina)
-    if dados is None:
-        raise BloqueadoError("Página de busca sem ytInitialData.")
+    for espera in (20, 60, None):  # se o YouTube recusar, espera e tenta de novo
+        pagina = http(url)
+        try:
+            dados = initial_data(pagina)
+        except BloqueadoError:
+            dados = None
+        if dados is not None:
+            break
+        if espera is None:
+            raise BloqueadoError("Página de busca sem ytInitialData.")
+        print("      (YouTube recusou, esperando %ds e tentando de novo...)" % espera)
+        time.sleep(espera)
     chave_api = ytcfg(pagina, "INNERTUBE_API_KEY")
     versao = ytcfg(pagina, "INNERTUBE_CLIENT_VERSION") or "2.20241101.00.00"
 
@@ -309,14 +318,16 @@ def fmt(n):
 def analisar(paginas):
     # 1-3. Buscas
     todos = {}
+    falhas = 0
     for i, (busca, idioma) in enumerate(BUSCAS, 1):
         if i > 1:
             time.sleep(PAUSA_ENTRE_BUSCAS_S)
         try:
             vids = buscar(busca, idioma, paginas)
-        except BloqueadoError:
-            raise
         except Exception as e:
+            falhas += 1
+            if falhas == len(BUSCAS) or (falhas >= 3 and not todos):
+                raise BloqueadoError(str(e))
             print("  [%2d/%d] %-40s ERRO: %s" % (i, len(BUSCAS), busca, e))
             continue
         for v in vids:
