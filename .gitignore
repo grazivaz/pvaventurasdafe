@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# caçador de nichos (resultados gerados)
+cacador_nichos/resultado.html
+cacador_nichos/resultado.json
+__pycache__/
